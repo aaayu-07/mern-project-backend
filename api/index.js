@@ -1,42 +1,44 @@
 require("dotenv").config();
 const express = require("express");
-const mongoose = require("mongoose");
-const cors = require('cors');
-const connectDB = require("../config/dbConnect");
-const corsOptions = require('../config/corsOptions');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const connectDB = require("../config/dbConnect");
+const mongoose = require("mongoose");
+var cors = require('cors')
+const corsOptions = require('../config/corsOptions');
 
-// Connect to MongoDB
+
 connectDB();
-
-// Use CORS middleware with options
+//user routes => /api/users and /api/user
 app.use(cors(corsOptions));
+app.use(express.json()); //middleware to parse json
 
-// Middleware to parse JSON
-app.use(express.json());
-
-// User routes
+// user routes for /api/users and /api/user
 app.use("/api", require("../routes/userRoutes"));
 
-// Article routes
+
+// article routes 
+
 app.use("/api/articles", require("../routes/articleRoutes"));
 
-// Tag routes
+//tag routes
+
 app.use("/api/tags", require("../routes/tagRoutes"));
 
-// Comment routes
+//comment routes
+
 app.use("/api/articles", require("../routes/commentRoutes"));
 
-// MongoDB connection events
+
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
+
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 });
 
 mongoose.connection.on('error', (err) => {
-  console.log('Error while connecting to MongoDB: ', err);
+    console.log('Error while connection to MongoDB: ',err)
 });
